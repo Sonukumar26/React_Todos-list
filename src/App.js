@@ -12,6 +12,8 @@ import {
 } from "react-router-dom";
 
 function App() {
+
+  
   let initTodo;
   if (localStorage.getItem("todos") === null) {
     initTodo = [];
@@ -20,19 +22,21 @@ function App() {
     initTodo = JSON.parse(localStorage.getItem("todos"));
   }
 
-
-  const onDelete = (todo) => {
-    console.log("I am ondelete of todo", todo);
-    // Deleting this way in react does not work
-    // let index = todos.indexOf(todo);
-    // todos.splice(index, 1);
-
-    setTodos(todos.filter((e) => {
-      return e !== todo;
-    }));
-    console.log("deleted", todos)
+ const [todos, setTodos] = useState(initTodo);
+  useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
-  }
+  }, [todos])
+
+
+ const onDelete = (todo) => {
+  const updatedTodos = todos.filter((e) => e !== todo);
+
+  setTodos(updatedTodos);
+  localStorage.setItem(
+    "todos",
+    JSON.stringify(updatedTodos)
+  );
+};
 
   const addTodo = (title, desc) => {
     console.log("I am adding this todo", title, desc)
@@ -43,7 +47,7 @@ function App() {
     else {
       sno = todos[todos.length - 1].sno + 1;
     }
-    
+
     const myTodo = {
       sno: sno,
       title: title,
@@ -53,28 +57,25 @@ function App() {
     console.log(myTodo);
   }
 
-  const [todos, setTodos] = useState(initTodo);
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos])
+ 
 
   return ( 
     <> 
     <Router>
       <Header title="My Todos List" searchBar={false} /> 
       <Routes>
-      <Route 
-        path="/" 
-        element={
-          <>
-            <AddTodo addTodo={addTodo} />
-            <Todos todos={todos} onDelete={onDelete} />
-          </>
-        } 
-      />
-      <Route path="/about" element={<About />} />
-    </Routes>
-      <Footer />
+        <Route 
+          path="/" 
+          element={
+            <>
+              <AddTodo addTodo={addTodo} />
+              <Todos todos={todos} onDelete={onDelete} />
+            </>
+          } 
+        />
+        <Route path="/about" element={<About />} />
+      </Routes>
+        <Footer />
     </Router>
     </>
   );
