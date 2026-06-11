@@ -43,6 +43,7 @@ function App() {
     else {
       sno = todos[todos.length - 1].sno + 1;
     }
+    
     const myTodo = {
       sno: sno,
       title: title,
